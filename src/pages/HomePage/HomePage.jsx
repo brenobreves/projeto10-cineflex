@@ -31,7 +31,7 @@ export default function HomePage() {
                     </MovieContainer>
                 )
                 )}
-                {filmes.length === 0 ? <div>Loading movies...</div> :""}
+                {filmes.length === 0 ? <div>Loading...</div> :""}
             </ListContainer>
 
         </PageContainer>
