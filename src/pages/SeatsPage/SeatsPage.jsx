@@ -77,7 +77,7 @@ export default function SeatsPage({setDadosCompra, currentPage , setCurrentPage 
 
             <SeatsContainer>
                 {seats.map(seat => (
-                    <SeatItem key={seat.id} 
+                    <SeatItem data-test="seat" key={seat.id} 
                     status={!seat.isAvailable? 'Ind' : seatsSelected.includes(seat.id) ? 'Sel' : 'Dis'}
                     onClick={seat.isAvailable ? ()=>toggleSeat(seat.id, seat.name) : ()=> {alert("Esse assento não está disponível")} }>{seat.name}</SeatItem>
                 )
@@ -101,15 +101,15 @@ export default function SeatsPage({setDadosCompra, currentPage , setCurrentPage 
 
             <FormContainer onSubmit={postSeats}>
                 <label htmlFor="putNome">Nome do Comprador:</label>
-                <input id="putNome" name="nome" placeholder="Digite seu nome..." value={nomeBuyer} onChange={(e)=> setNomeBuyer(e.target.value)}/>
+                <input data-test="client-name" id="putNome" name="nome" placeholder="Digite seu nome..." value={nomeBuyer} onChange={(e)=> setNomeBuyer(e.target.value)}/>
 
                 <label htmlFor="putCPF">CPF do Comprador:</label>
-                <input id="putCPF" name="CPF" placeholder="Digite seu CPF..." value={cpf} onChange={(e)=> setCPF (e.target.value)}/>
+                <input data-test="client-cpf" id="putCPF" name="CPF" placeholder="Digite seu CPF..." value={cpf} onChange={(e)=> setCPF (e.target.value)}/>
 
-                <button type="submit">Reservar Assento(s)</button>
+                <button data-test="book-seat-btn" type="submit">Reservar Assento(s)</button>
             </FormContainer>
 
-            <FooterContainer>
+            <FooterContainer data-test="footer">
                 <div>
                     <img src={movie.posterURL} alt="poster" />
                 </div>
