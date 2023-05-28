@@ -6,18 +6,24 @@ import SuccessPage from "./pages/SuccessPage/SuccessPage";
 import axios from "axios";
 import { BrowserRouter, Routes , Route } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 export default function App() {
     axios.defaults.headers.common['Authorization'] = '9maaDDkKFQ1saSPY3udlpWmT';
+    const [dadosCompra, setDadosCompra] = useState({});
+    const [currentPage, setCurrentPage] = useState('/');
+    const [previousPage, setPreviousPage] = useState('');
     return (
         <BrowserRouter>
            <Link to='/'>
            <NavContainer>CINEFLEX</NavContainer>
            </Link>
            <Routes>
-                <Route path='/' element={<HomePage/>}/>
-                <Route path='/sessoes/:idFilme' element={<SessionsPage/>}/> 
-                <Route path='/assentos/:idSessao' element={<SeatsPage/>}/> 
+                <Route path='/' element={<HomePage currentPage={currentPage} setCurrentPage={setCurrentPage} previousPage={previousPage} setPreviousPage={setPreviousPage}/>}/>
+                <Route path='/sessoes/:idFilme' element={<SessionsPage currentPage={currentPage} setCurrentPage={setCurrentPage} previousPage={previousPage} setPreviousPage={setPreviousPage}/>}/>
+                <Route path='/assentos/:idSessao' element={<SeatsPage setDadosCompra={setDadosCompra} currentPage={currentPage} setCurrentPage={setCurrentPage} previousPage={previousPage} setPreviousPage={setPreviousPage}/>}/>
+                <Route path='/sucesso' element={<SuccessPage dadosCompra={dadosCompra} currentPage={currentPage} setCurrentPage={setCurrentPage} previousPage={previousPage} setPreviousPage={setPreviousPage}/>}/>
+                
                 {/* <SeatsPage /> */}
                 {/* <SessionsPage /> */}
                 {/* <SuccessPage /> */}

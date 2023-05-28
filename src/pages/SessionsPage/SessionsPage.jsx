@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
-export default function SessionsPage() {
+export default function SessionsPage({currentPage , setCurrentPage , previousPage , setPreviousPage}) {
     const {idFilme} = useParams();
     const URL = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes`;
     const [sessoes, setSessoes] = useState([]);

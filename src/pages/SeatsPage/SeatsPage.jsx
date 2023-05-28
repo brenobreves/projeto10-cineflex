@@ -1,9 +1,12 @@
 import styled from "styled-components";
-import { useParams  } from "react-router-dom";
+import { useNavigate, useParams  } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function SeatsPage() {
+export default function SeatsPage({setDadosCompra, currentPage , setCurrentPage , previousPage , setPreviousPage}) {
+
+    const navigate = useNavigate();
+
     const {idSessao} = useParams();
     const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`;
     const [movie, setMovie] = useState({});
@@ -11,32 +14,61 @@ export default function SeatsPage() {
     const [hora, setHora] = useState('');
     const [seats, setSeats] = useState([]);
     const [seatsSelected, setSeatSelected] = useState([]);
+    const [seatsNames , setSeatsNames] = useState([]);
+    const [cpf, setCPF] = useState('');
+    const [nomeBuyer, setNomeBuyer] = useState('');
     useEffect(()=>{
 
         const promise = axios.get(URL);
         
         promise.then((resp)=> {
-            console.log(resp.data);
             setMovie(resp.data.movie);
             setDay(resp.data.day);
             setHora(resp.data.name);
             setSeats(resp.data.seats);
-            console.log(resp.data.seats);
 
         });
         promise.catch((erro)=> {
             console.log(erro);
         });
     },[]);
-    function toggleSeat(id){
+    function toggleSeat(id,nome){
         if(seatsSelected.includes(id)){
             const index = seatsSelected.indexOf(id);
             const novoArray = [...seatsSelected];
+            const novosNomes = [...seatsNames];
             const x = novoArray.splice(index,1);
+            const y = novosNomes.splice(index,1);
             setSeatSelected(novoArray);
+            setSeatsNames(novosNomes);
             return
         }
-        setSeatSelected([...seatsSelected,id]); 
+        setSeatSelected([...seatsSelected,id]);
+        setSeatsNames([...seatsNames, nome]); 
+    }
+
+    function postSeats(e){
+        e.preventDefault();
+        const novaReserva = {
+            ids: seatsSelected,
+            name: nomeBuyer,
+            cpf: cpf
+        }
+        const postURL = "https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many";
+        const promise = axios.post(postURL,novaReserva);
+        promise.then(()=>{
+            navigate("/sucesso")
+        });
+        promise.catch(()=> alert("Dados inválidos, verificar se os assentos foram selecionados e se seu nome e CPF estão corretos"));
+        const dadosCompra = {
+            title: movie.title ,
+            data: day.date ,
+            hora: hora ,
+            seats: seatsNames ,
+            nomeBuyer: nomeBuyer ,
+            cpf: cpf
+        }
+        setDadosCompra(dadosCompra);
     }
     
     return (
@@ -47,7 +79,7 @@ export default function SeatsPage() {
                 {seats.map(seat => (
                     <SeatItem key={seat.id} 
                     status={!seat.isAvailable? 'Ind' : seatsSelected.includes(seat.id) ? 'Sel' : 'Dis'}
-                    onClick={seat.isAvailable ? ()=>toggleSeat(seat.id) : ()=> {alert("Esse assento não está disponível")} }>{seat.name}</SeatItem>
+                    onClick={seat.isAvailable ? ()=>toggleSeat(seat.id, seat.name) : ()=> {alert("Esse assento não está disponível")} }>{seat.name}</SeatItem>
                 )
                 )}
             </SeatsContainer>
@@ -67,23 +99,23 @@ export default function SeatsPage() {
                 </CaptionItem>
             </CaptionContainer>
 
-            <FormContainer>
-                Nome do Comprador:
-                <input placeholder="Digite seu nome..." />
+            <FormContainer onSubmit={postSeats}>
+                <label htmlFor="putNome">Nome do Comprador:</label>
+                <input id="putNome" name="nome" placeholder="Digite seu nome..." value={nomeBuyer} onChange={(e)=> setNomeBuyer(e.target.value)}/>
 
-                CPF do Comprador:
-                <input placeholder="Digite seu CPF..." />
+                <label htmlFor="putCPF">CPF do Comprador:</label>
+                <input id="putCPF" name="CPF" placeholder="Digite seu CPF..." value={cpf} onChange={(e)=> setCPF (e.target.value)}/>
 
-                <button>Reservar Assento(s)</button>
+                <button type="submit">Reservar Assento(s)</button>
             </FormContainer>
 
             <FooterContainer>
                 <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
+                    <img src={movie.posterURL} alt="poster" />
                 </div>
                 <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
-                    <p>Sexta - 14h00</p>
+                    <p>{movie.title}</p>
+                    <p>{day.weekday} - {hora}</p>
                 </div>
             </FooterContainer>
 
@@ -112,7 +144,7 @@ const SeatsContainer = styled.div`
     justify-content: center;
     margin-top: 20px;
 `
-const FormContainer = styled.div`
+const FormContainer = styled.form`
     width: calc(100vw - 40px); 
     display: flex;
     flex-direction: column;
