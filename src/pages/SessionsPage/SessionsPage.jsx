@@ -1,7 +1,8 @@
 import axios from "axios";
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import styled from "styled-components"
+import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 export default function SessionsPage() {
     const {idFilme} = useParams();
@@ -14,9 +15,7 @@ export default function SessionsPage() {
         const promise = axios.get(URL);
         
         promise.then((resp)=> {
-            console.log(resp.data);
             setSessoes(resp.data.days);
-            console.log(resp.data.days);
             setPosterURL(resp.data.posterURL);
             setNomeFilme(resp.data.title);
         });
@@ -33,7 +32,9 @@ export default function SessionsPage() {
                     {`${sessao.weekday} - ${sessao.date}`}
                     <ButtonsContainer>
                         {sessao.showtimes.map( showtime => (
-                            <button key={showtime.id}>{showtime.name}</button>
+                            <Link to={`/assentos/${showtime.id}`} key={showtime.id}>
+                                <button key={showtime.id}>{showtime.name}</button>
+                            </Link>
                         )
                         )}
                     </ButtonsContainer>
@@ -93,11 +94,11 @@ const ButtonsContainer = styled.div`
 const FooterContainer = styled.div`
     width: 100%;
     height: 120px;
-    background-color: #C3CFD9;
+    background-color: #DFE6ED;
     display: flex;
     flex-direction: row;
     align-items: center;
-    font-size: 20px;
+    font-size: 26px;
     position: fixed;
     bottom: 0;
 

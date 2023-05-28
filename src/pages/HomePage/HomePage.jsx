@@ -1,5 +1,5 @@
-import styled from "styled-components"
-import axios from "axios"
+import styled from "styled-components";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -13,7 +13,6 @@ export default function HomePage() {
         const promise = axios.get(URL);
 
         promise.then((resp)=> {
-            console.log(resp.data);
             setFilmes(resp.data);
         });
         promise.catch((erro)=> {

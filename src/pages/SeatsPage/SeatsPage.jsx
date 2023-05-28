@@ -1,30 +1,68 @@
-import styled from "styled-components"
+import styled from "styled-components";
+import { useParams  } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function SeatsPage() {
+    const {idSessao} = useParams();
+    const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`;
+    const [movie, setMovie] = useState({});
+    const [day, setDay] = useState({});
+    const [hora, setHora] = useState('');
+    const [seats, setSeats] = useState([]);
+    const [seatsSelected, setSeatSelected] = useState([]);
+    useEffect(()=>{
 
+        const promise = axios.get(URL);
+        
+        promise.then((resp)=> {
+            console.log(resp.data);
+            setMovie(resp.data.movie);
+            setDay(resp.data.day);
+            setHora(resp.data.name);
+            setSeats(resp.data.seats);
+            console.log(resp.data.seats);
+
+        });
+        promise.catch((erro)=> {
+            console.log(erro);
+        });
+    },[]);
+    function toggleSeat(id){
+        if(seatsSelected.includes(id)){
+            const index = seatsSelected.indexOf(id);
+            const novoArray = [...seatsSelected];
+            const x = novoArray.splice(index,1);
+            setSeatSelected(novoArray);
+            return
+        }
+        setSeatSelected([...seatsSelected,id]); 
+    }
+    
     return (
         <PageContainer>
             Selecione o(s) assento(s)
 
             <SeatsContainer>
-                <SeatItem>01</SeatItem>
-                <SeatItem>02</SeatItem>
-                <SeatItem>03</SeatItem>
-                <SeatItem>04</SeatItem>
-                <SeatItem>05</SeatItem>
+                {seats.map(seat => (
+                    <SeatItem key={seat.id} 
+                    status={!seat.isAvailable? 'Ind' : seatsSelected.includes(seat.id) ? 'Sel' : 'Dis'}
+                    onClick={seat.isAvailable ? ()=>toggleSeat(seat.id) : ()=> {alert("Esse assento não está disponível")} }>{seat.name}</SeatItem>
+                )
+                )}
             </SeatsContainer>
 
             <CaptionContainer>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle status={'Sel'}/>
                     Selecionado
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle status={'Dis'}/>
                     Disponível
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle status={'Ind'}/>
                     Indisponível
                 </CaptionItem>
             </CaptionContainer>
@@ -96,8 +134,8 @@ const CaptionContainer = styled.div`
     margin: 20px;
 `
 const CaptionCircle = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    border: 1px solid ${(props) => props.status === 'Sel' ? '#0E7D71' : props.status === 'Ind' ? "#F7C52B" : "#7B8B99"};         // Essa cor deve mudar
+    background-color: ${(props) => props.status === 'Sel' ? '#1AAE9E' : props.status === 'Ind' ? "#FBE192" : "#C3CFD9"};    // Essa cor deve mudar
     height: 25px;
     width: 25px;
     border-radius: 25px;
@@ -113,8 +151,8 @@ const CaptionItem = styled.div`
     font-size: 12px;
 `
 const SeatItem = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    border: 1px solid ${(props) => props.status === 'Sel' ? '#0E7D71' : props.status === 'Ind' ? "#F7C52B" : "#7B8B99"};         // Essa cor deve mudar
+    background-color: ${(props) => props.status === 'Sel' ? '#1AAE9E' : props.status === 'Ind' ? "#FBE192" : "#C3CFD9"};    // Essa cor deve mudar
     height: 25px;
     width: 25px;
     border-radius: 25px;
