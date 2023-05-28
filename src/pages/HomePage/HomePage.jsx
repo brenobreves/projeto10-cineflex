@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import axios from "axios"
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
 
@@ -27,7 +28,9 @@ export default function HomePage() {
             <ListContainer>
                 {filmes.map(filme => (
                     <MovieContainer key={filme.id}>
+                        <Link to={`/sessoes/${filme.id}`}>
                         <img src={filme.posterURL} alt="poster"/>
+                        </Link>
                     </MovieContainer>
                 )
                 )}

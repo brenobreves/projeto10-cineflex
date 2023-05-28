@@ -4,18 +4,24 @@ import SeatsPage from "./pages/SeatsPage/SeatsPage"
 import SessionsPage from "./pages/SessionsPage/SessionsPage"
 import SuccessPage from "./pages/SuccessPage/SuccessPage"
 import axios from "axios"
+import { BrowserRouter, Routes , Route } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 export default function App() {
     axios.defaults.headers.common['Authorization'] = '9maaDDkKFQ1saSPY3udlpWmT';
     return (
-        <>
+        <BrowserRouter>
+           <Link to='/'>
            <NavContainer>CINEFLEX</NavContainer>
-
-            <HomePage />
-            {/* <SeatsPage /> */}
-            {/* <SessionsPage /> */}
-            {/* <SuccessPage /> */}
-        </>
+           </Link>
+           <Routes>
+                <Route path='/' element={<HomePage/>}/>
+                <Route path='/sessoes/:idFilme' element={<SessionsPage/>}/> 
+                {/* <SeatsPage /> */}
+                {/* <SessionsPage /> */}
+                {/* <SuccessPage /> */}
+           </Routes>
+        </BrowserRouter>
     )
 }
 
